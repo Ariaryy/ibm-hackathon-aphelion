@@ -1,0 +1,8 @@
+cost_to_quantity_assumptions:
+  ride_share:
+    unit: km
+    conversion_rate: 15
+emission_factors:
+  ride_share:
+    unit: kg CO₂e/km
+    value: 0.1
