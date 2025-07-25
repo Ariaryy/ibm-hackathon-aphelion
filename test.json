@@ -1,0 +1,13 @@
+[
+  {
+    "scope": "Scope 3",
+    "activity": "Business travel- land",
+    "quantity": 600,
+    "unit": "₹",
+    "country": null,
+    "source_text": "Date: July 24, 2025 Ride Details:\nTrip: Office to Airport,\nAmount: ₹600,\nVendor: Tata Power",
+    "ghg_emission_factor": 0.09844,
+    "id": "22_912_3178_11_1",
+    "notes": "WTT- business travel- air,WTT- flights,Long-haul, to/from UK,First class,Without RF"
+  }
+]

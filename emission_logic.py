@@ -1,19 +1,41 @@
-import yaml
-import os
+import pandas as pd
 
-def load_config():
-    """Load emission factors and assumptions from YAML config."""
-    with open("config/assumptions.yaml", "r") as file:
-        return yaml.safe_load(file)
+# Load the emission factor dataset
+df = pd.read_csv("ghg-conversion-factors-2025-flat-format.csv")
 
-def estimate_emissions(llm_result):
-    """Estimate emissions based on LLM output."""
-    try:
-        quantity = llm_result["activity_data"]["estimated_quantity"]
-        emission_factor = llm_result["emission_factor"]["value"]
-        emissions_kg = quantity * emission_factor
-        llm_result["emissions_kg"] = emissions_kg
-        return llm_result
-    except Exception as e:
-        print(f"Error estimating emissions: {e}")
-        return llm_result
+def find_emission_factor(scope: str, fuel: str, unit: str):
+    # Normalize inputs
+    scope = scope.strip().title()
+    fuel = fuel.strip().title()
+    unit = unit.strip().lower()
+
+    # Try to match by Scope, Fuel (Level 3), and Unit (UOM)
+    match = df[
+        (df["Scope"].str.strip().str.title() == scope) &
+        (df["Level 3"].str.strip().str.title() == fuel) &
+        (df["UOM"].str.strip().str.lower() == unit)
+    ]
+
+    if match.empty:
+        return None
+
+    # If multiple rows match, return the first one (or refine logic)
+    row = match.iloc[0]
+
+    return {
+        "emission_factor_id": row["ID"],
+        "emission_factor": float(row["GHG Conversion Factor 2025"]),
+        "unit": row["UOM"],
+        "ghg_unit": row["GHG/Unit"]
+    }
+
+# Example usage
+agent_output = {
+    "scope": "1",
+    "fuel": "Butane",
+    "unit": "tonnes"
+}
+
+factor = find_emission_factor(agent_output["scope"], agent_output["fuel"], agent_output["unit"])
+
+print(factor)
